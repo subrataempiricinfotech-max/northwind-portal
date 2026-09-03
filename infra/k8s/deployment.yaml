@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: northwind-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: northwind-portal
+  template:
+    metadata:
+      labels:
+        app: northwind-portal
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/northwind/portal:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: stripe-secret-key
+            - name: STRIPE_SANDBOX_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: stripe-sandbox-secret-key
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: stripe-webhook-secret
+            - name: STRIPE_WEBHOOK_SECRET_SANDBOX
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: stripe-webhook-secret-sandbox
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: sendgrid-api-key
+            - name: TWILIO_ACCOUNT_SID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: twilio-account-sid
+            - name: TWILIO_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: twilio-auth-token
+            - name: TWILIO_VERIFY_SERVICE_SID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: twilio-verify-service-sid
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: aws-secret-access-key
+            - name: S3_BUCKET
+              value: northwind-portal-product-images
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: sentry-dsn
+            - name: NEXT_PUBLIC_GA_MEASUREMENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: ga4-measurement-id
+            - name: FACEBOOK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: facebook-client-id
+            - name: FACEBOOK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: facebook-client-secret
+            - name: ZOHO_BOOKS_ORG_ID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: zoho-books-org-id
+            - name: ZOHO_BOOKS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: zoho-books-client-id
+            - name: ZOHO_BOOKS_REFRESH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: northwind-integrations
+                  key: zoho-books-refresh-token
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: northwind-portal
+spec:
+  selector:
+    app: northwind-portal
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
