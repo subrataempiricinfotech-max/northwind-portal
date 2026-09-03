@@ -1,8 +1,14 @@
 import sgMail from "@sendgrid/mail";
 
-const SENDGRID_API_KEY = "SG.FAKE_DUMMY_DO_NOT_USE.0000000000000000000000_not_a_real_key";
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(name + " is required");
+  }
+  return value;
+}
 
-sgMail.setApiKey(SENDGRID_API_KEY);
+sgMail.setApiKey(requireEnv("SENDGRID_API_KEY"));
 
 export async function sendOrderReceipt(to: string, orderId: string) {
   await sgMail.send({
